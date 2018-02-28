@@ -164,7 +164,7 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - portainer-data:/data
+      - portainer-data:/data:nocopy
       - /var/run/docker.sock:/var/run/docker.sock:ro
     logging:
       driver: fluentd
@@ -201,9 +201,9 @@ volumes:
   grafana-data:
     driver: local
     driver_opts:
-      <<: *volume-options
       type: nfs4
       device: :/grafana-data
+      o: addr=192.168.0.52,rsize=8192,wsize=8192,timeo=15,hard,intr
 
   portainer-data:
     driver: local
