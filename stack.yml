@@ -133,10 +133,6 @@ services:
       update_config:
         parallelism: 1
         order: start-first
-      placement:
-        # TODO remove this constraint once the NFS issues are resolved
-        constraints:
-          - node.hostname == rock64
       labels:
         routing-host: metrics.viktoradam.net
         routing-port: 3000
@@ -151,7 +147,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - grafana-data:/var/lib/grafana/data:nocopy
+      - /mnt/shared/grafana-data:/var/lib/grafana/data
     logging:
       driver: fluentd
       options:
@@ -202,12 +198,12 @@ volumes:
       <<: *volume-options
       device: :/mnt/shared/prometheus-data
 
-  grafana-data:
-    driver: local
-    driver_opts:
-      type: nfs4
-      device: :/grafana-data
-      o: addr=192.168.0.52,rsize=8192,wsize=8192,timeo=15,hard,intr
+#  grafana-data:
+#    driver: local
+#    driver_opts:
+#      type: nfs4
+#      device: :/grafana-data
+#      o: addr=192.168.0.52,rsize=8192,wsize=8192,timeo=15,hard,intr
 
   portainer-data:
     driver: local
