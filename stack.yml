@@ -1,0 +1,219 @@
+version: '3.5'
+
+x-log-options:
+  &log-options
+  fluentd-address: ${HOSTNAME}:24224
+  fluentd-async-connect: 'true'
+  fluentd-sub-second-precision: 'true'
+
+x-nfs-volume-opts:
+  &volume-opts
+  type: nfs
+  o: addr=192.168.0.52,rsize=8192,wsize=8192,timeo=15,hard,intr
+
+services:
+
+  prometheus:
+    image: rycus86/prometheus:2.1.0
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.memory == high
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-data:/prometheus:nocopy
+      - type: volume
+        source: prometheus-config
+        target: /etc/prometheus
+        read_only: true
+        volume:
+          nocopy: true
+    networks:
+      - default
+      - monitoring
+      - legacy
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.prometheus
+
+  prometheus-pygen:
+    image: rycus86/docker-pygen
+    command: >
+      --template /etc/docker-pygen/templates/prometheus.tmpl
+      --target /etc/prometheus/prometheus.yml
+      --signal prometheus HUP
+      --interval 3 10
+      --swarm-manager
+      --workers tasks.prometheus-pygen-worker
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        prometheus-job: pygen-manager-prometheus
+        prometheus-port: 9413
+    configs:
+      - source: prometheus-template
+        target: /etc/docker-pygen/templates/prometheus.tmpl
+    volumes:
+      - prometheus-config:/etc/prometheus:nocopy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.pygen.manager.prometheus.node-exporter
+
+  prometheus-pygen-worker:
+    image: rycus86/docker-pygen:worker
+    command: --manager prometheus-pygen
+    read_only: true
+    deploy:
+      mode: global
+      labels:
+        prometheus-job: pygen-worker-prometheus
+        prometheus-port: 9414
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.pygen.worker.prometheus.node-exporter
+
+  prometheus-node-exporter:
+    image: rycus86/prometheus-node-exporter:0.15.1
+    deploy:
+      mode: global
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        prometheus-job: node-exporter
+        prometheus-port: 9100
+    pid: host
+    logging:
+      driver: json-file
+      options:
+        max-size: 25m
+        max-file: 4
+
+  telegraf:
+    image: telegraf:1.5.0
+    deploy:
+      mode: global
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        prometheus-job: telegraf
+        prometheus-port: 9273
+    configs:
+      - source: telegraf-config
+        target: /etc/telegraf/telegraf.config
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.telegraf
+
+  # Visualization
+
+  grafana:
+    image: rycus86/grafana:4.6.1
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        routing-host: metrics.viktoradam.net
+        routing-port: 3000
+        prometheus-job: grafana
+        prometheus-port: 3000
+    secrets:
+      - source: grafana-config
+        target: /etc/grafana/grafana.ini
+    networks:
+      - monitoring
+      - legacy
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana/data:nocopy
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.grafana
+
+  portainer:
+    image: portainer/portainer:1.16.2
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - 9000:9000
+    volumes:
+      - portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.portainer
+
+configs:
+  prometheus-template:
+    file: ./config/prometheus.pygen.template.yml
+    name: pygen-prometheus-${PROMETHEUS_PYGEN_TEMPLATE_YML}
+  telegraf-config:
+    file: ./config/telegraf.config
+    name: telegraf-config-${TELEGRAF_CONFIG}
+
+secrets:
+  grafana-config:
+    file: ./config/grafana.conf
+    name: grafana-config-${GRAFANA_CONFIG}
+
+volumes:
+  prometheus-config:
+    driver: local
+    driver_opts:
+      <<: *volume-options
+      device: :/mnt/shared/prometheus-config
+
+  prometheus-data:
+    driver: local
+    driver_opts:
+      <<: *volume-options
+      device: :/mnt/shared/prometheus-data
+
+  grafana-data:
+    driver: local
+    driver_opts:
+      <<: *volume-options
+      device: :/mnt/shared/grafana-data
+
+  portainer-data:
+    driver: local
+    driver_opts:
+      <<: *volume-options
+      device: :/mnt/shared/portainer-data
+
+networks:
+  monitoring:
+    name: home-monitoring
+    external: true
+  legacy:
+    name: home-legacy
+    external: true

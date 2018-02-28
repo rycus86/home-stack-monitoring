@@ -1,0 +1,37 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+  external_labels:
+      monitor: 'home-stack'
+
+rule_files:
+
+scrape_configs:
+  - job_name: 'prometheus'
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'docker'
+
+    static_configs:
+      - targets:
+        {% for node in nodes %}
+        - '{{ node.address }}:9323'
+        {% endfor %}
+
+  {% for job_name, services in services|groupby('labels.prometheus-job') %}
+      {% if not job_name %} {% continue %} {% endif %}
+      {% set service = services|first %}
+      {% set port = service.labels['prometheus-port'] %}
+      {% if not port %} {% continue %} {% endif %}
+
+  - job_name: '{{ job_name }}'
+
+    dns_sd_configs:
+      - names: ['tasks.{{ service.name }}']
+        port: {{ port }}
+        type: A
+        refresh_interval: 5s
+  {% endfor %}
