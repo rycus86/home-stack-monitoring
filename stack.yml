@@ -202,13 +202,15 @@ volumes:
     driver: local
     driver_opts:
       <<: *volume-options
-      device: :/mnt/shared/grafana-data
+      type: nfs4
+      device: :/grafana-data
 
   portainer-data:
     driver: local
     driver_opts:
       <<: *volume-options
-      device: :/mnt/shared/portainer-data
+      type: nfs4
+      device: :/portainer-data
 
 networks:
   monitoring:
