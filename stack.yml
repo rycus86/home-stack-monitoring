@@ -133,6 +133,10 @@ services:
       update_config:
         parallelism: 1
         order: start-first
+      placement:
+        # TODO remove this constraint once the NFS issues are resolved
+        constraints:
+          - node.hostname == rock64
       labels:
         routing-host: metrics.viktoradam.net
         routing-port: 3000
