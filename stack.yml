@@ -2,7 +2,7 @@ version: '3.5'
 
 x-log-options:
   &log-options
-  fluentd-address: ${HOSTNAME}:24224
+  fluentd-address: 192.168.0.52:24224
   fluentd-async-connect: 'true'
   fluentd-sub-second-precision: 'true'
 
