@@ -183,7 +183,7 @@ configs:
 secrets:
   grafana-config:
     file: ./config/grafana.conf
-    name: grafana-config-${GRAFANA_CONFIG}
+    name: grafana-config-${GRAFANA_CONF}
 
 volumes:
   prometheus-config:
