@@ -67,7 +67,7 @@ services:
       driver: fluentd
       options:
         <<: *log-options
-        tag: app.pygen.manager.prometheus.node-exporter
+        tag: app.pygen.manager.prometheus
 
   prometheus-pygen-worker:
     image: rycus86/docker-pygen:worker
@@ -84,7 +84,7 @@ services:
       driver: fluentd
       options:
         <<: *log-options
-        tag: app.pygen.worker.prometheus.node-exporter
+        tag: app.pygen.worker.prometheus
 
   prometheus-node-exporter:
     image: rycus86/prometheus-node-exporter:0.15.1
