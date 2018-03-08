@@ -1,0 +1,56 @@
+@startuml
+
+frame "Monitoring stack" as stack {
+    [Prometheus] << rycus86/prometheus >> as prometheus #8f8
+    [Prometheus node exporter] << rycus86/prometheus-node-exporter >> as node_exporter #8fc
+    [Telegraf] << telegraf >> as telegraf #8fc
+    [Grafana] << rycus86/grafana >> as grafana #fcc
+    [Portainer] << portainer/portainer >> as portainer #fcc
+
+    [PyGen config generator] << rycus86/docker-pygen >> as pygen #ff8
+
+    (Docker engine) as docker #ccc
+
+    node "Other Swarm nodes" {
+        [Prometheus node exporter] << rycus86/prometheus-node-exporter >> as node_exporter_2 #8fc
+        [Telegraf] << telegraf >> as telegraf_2 #8fc
+
+        [PyGen worker] << rycus86/docker-pygen:worker >> as pygen_worker #ff8
+    }
+}
+
+cloud "Internal network" as intnet #ccc
+
+frame "Web stack" as web_stack {
+    [Nginx reverse proxy] << nginx >> as nginx #ccc
+}
+
+frame "Logging stack" {
+    [Fluentd] #ccc
+}
+
+nginx --> grafana : metrics.viktoradam.net
+grafana --> prometheus : Query
+grafana <.. prometheus
+pygen -u-> prometheus : Generate & reload \n configuration
+pygen_worker -u-> pygen : Send events
+
+prometheus .l.> node_exporter
+prometheus .r.> telegraf
+prometheus ..> pygen
+prometheus ...> node_exporter_2 : Collect metrics
+prometheus ...> telegraf_2
+prometheus ...> pygen_worker
+
+node_exporter .. node_exporter_2
+telegraf .. telegraf_2
+
+intnet --> portainer
+portainer -l- docker
+telegraf -u-- docker
+
+stack -u-> [Fluentd]
+stack -u-> [Fluentd]
+stack -u-> [Fluentd] : Send logs
+
+@enduml
