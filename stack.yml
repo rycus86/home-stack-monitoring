@@ -33,7 +33,6 @@ services:
     networks:
       - default
       - monitoring
-      - legacy
     logging:
       driver: fluentd
       options:
@@ -143,7 +142,6 @@ services:
         target: /etc/grafana/grafana.ini
     networks:
       - monitoring
-      - legacy
     ports:
       - 3000:3000
     volumes:
@@ -215,7 +213,4 @@ volumes:
 networks:
   monitoring:
     name: home-monitoring
-    external: true
-  legacy:
-    name: home-legacy
     external: true
