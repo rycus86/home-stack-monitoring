@@ -141,6 +141,7 @@ services:
       - source: grafana-config
         target: /etc/grafana/grafana.ini
     networks:
+      - web
       - monitoring
     ports:
       - 3000:3000
@@ -211,6 +212,9 @@ volumes:
       device: :/portainer-data
 
 networks:
+  web:
+    name: home-web
+    external: true
   monitoring:
     name: home-monitoring
     external: true
