@@ -14,7 +14,7 @@ x-nfs-volume-opts:
 services:
 
   prometheus:
-    image: rycus86/prometheus:2.1.0
+    image: rycus86/prometheus:2.2.1
     deploy:
       replicas: 1
       placement:
@@ -86,7 +86,7 @@ services:
         tag: app.pygen.worker.prometheus
 
   prometheus-node-exporter:
-    image: rycus86/prometheus-node-exporter:0.15.1
+    image: rycus86/prometheus-node-exporter:0.15.2
     deploy:
       mode: global
       update_config:
@@ -103,7 +103,7 @@ services:
         max-file: 4
 
   telegraf:
-    image: telegraf:1.5.0
+    image: telegraf:1.5.2
     deploy:
       mode: global
       update_config:
@@ -126,7 +126,7 @@ services:
   # Visualization
 
   grafana:
-    image: rycus86/grafana:5.0.0
+    image: rycus86/grafana:5.0.2
     deploy:
       replicas: 1
       update_config:
@@ -154,7 +154,7 @@ services:
         tag: app.grafana
 
   portainer:
-    image: portainer/portainer:1.16.2
+    image: portainer/portainer:1.16.4
     deploy:
       replicas: 1
       placement:
