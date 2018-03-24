@@ -3,7 +3,9 @@ releases:
     - repo: nginx
     - repo: ghost
     - repo: telegraf
-    - repo: portainer
+
+    - owner: portainer
+      repo:  portainer
 
     - owner:  fluent
       repo:   fluentd
