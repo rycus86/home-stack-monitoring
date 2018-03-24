@@ -1,6 +1,13 @@
 releases:
   dockerhub:
     - repo: nginx
+    - repo: ghost
+    - repo: telegraf
+    - repo: portainer
+
+    - owner:  fluent
+      repo:   fluentd
+      filter: '^v[0-9]+\.[0-9]+\.[0-9]+$'
 
   github:
     - owner:  docker
@@ -9,3 +16,14 @@ releases:
 
     - owner: docker
       repo:  docker-py
+
+    - owner:  prometheus
+      repo:   prometheus
+      filter: '^v?[0-9]+\.[0-9]+\.[0-9]+($| .*)'
+
+    - owner:  prometheus
+      repo:   node_exporter
+      filter: '^v?[0-9]+\.[0-9]+\.[0-9]+($| .*)'
+
+    - owner: grafana
+      repo:  grafana
