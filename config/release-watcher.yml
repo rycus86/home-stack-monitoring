@@ -3,7 +3,9 @@ releases:
     - repo: nginx
 
   github:
+    - owner:  docker
+      repo:   docker-ce
+      filter: '[0-9]+\.[0-9]+\..+'
+
     - owner: docker
-      repo: docker-ce
-    - owner: docker
-      repo: docker-py
+      repo:  docker-py
