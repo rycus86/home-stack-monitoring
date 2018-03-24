@@ -1,0 +1,9 @@
+releases:
+  dockerhub:
+    - repo: nginx
+
+  github:
+    - owner: docker
+      repo: docker-ce
+    - owner: docker
+      repo: docker-py

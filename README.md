@@ -6,6 +6,7 @@ Monitoring related services for my Home Lab
 - [Grafana](https://grafana.com/)
 - [Portainer](https://portainer.io/)
 - [PyGen configuration generator](https://github.com/rycus86/docker-pygen)
+- [Release Watcher](https://github.com/rycus86/release-watcher)
 
 ## Components
 

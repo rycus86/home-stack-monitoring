@@ -171,6 +171,31 @@ services:
         <<: *log-options
         tag: app.portainer
 
+  release-watcher:
+    image: rycus86/release-watcher
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+    configs:
+      - source: release-watcher-app
+        target: /var/conf/release-watcher.yml
+      - source: release-watcher-main
+        target: /var/secrets/release-watcher
+    secrets:
+      - source: release-watcher-github
+        target: /var/secrets/github
+      - source: release-watcher-slack
+        target: /var/secrets/slack
+    volumes:
+      - release-watcher-data:/var/data:nocopy
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.release.watcher
+
 configs:
   prometheus-template:
     file: ./config/prometheus.pygen.template.yml
@@ -178,11 +203,23 @@ configs:
   telegraf-config:
     file: ./config/telegraf.config
     name: telegraf-config-${TELEGRAF_CONFIG}
+  release-watcher-app:
+    file: ./config/release-watcher.yml
+    name: release-watcher-app-config-${RELEASE_WATCHER_YML}
+  release-watcher-main:
+    file: ./config/rw_main.config
+    name: release-watcher-main-config-${RW_MAIN_CONFIG}
 
 secrets:
   grafana-config:
     file: ./config/grafana.conf
     name: grafana-config-${GRAFANA_CONF}
+  release-watcher-github:
+    file: ./config/rw_github.conf
+    name: release-watcher-github-config-${RW_GITHUB_CONF}
+  release-watcher-slack:
+    file: ./config/rw_slack.conf
+    name: release-watcher-slack-config-${RW_SLACK_CONF}
 
 volumes:
   prometheus-config:
@@ -210,6 +247,13 @@ volumes:
       <<: *volume-options
       type: nfs4
       device: :/portainer-data
+
+  release-watcher-data:
+    driver: local
+    driver_opts:
+      <<: *volume-options
+      type: nfs4
+      device: :/release-watcher
 
 networks:
   web:
