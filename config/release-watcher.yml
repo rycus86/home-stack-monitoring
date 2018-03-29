@@ -29,3 +29,13 @@ releases:
 
     - owner: grafana
       repo:  grafana
+
+  jetbrains:
+    - name: go
+      alias: GoLand
+
+    - name: iiu
+      alias: IntelliJ IDEA
+
+    - name: pcp
+      alias: PyCharm
