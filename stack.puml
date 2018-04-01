@@ -6,6 +6,7 @@ frame "Monitoring stack" as stack {
     [Telegraf] << telegraf >> as telegraf #8fc
     [Grafana] << rycus86/grafana >> as grafana #fcc
     [Portainer] << portainer/portainer >> as portainer #fcc
+    [Release Watcher] << rycus86/release-watcher >> as release_watcher #88f
 
     [PyGen config generator] << rycus86/docker-pygen >> as pygen #ff8
 
@@ -23,6 +24,13 @@ cloud "Internal network" as intnet #ccc
 
 frame "Web stack" as web_stack {
     [Nginx reverse proxy] << nginx >> as nginx #ccc
+}
+
+frame "3rd party" as 3rd_party #ccc {
+    [GitHub] #aaf
+    [Docker Hub] #aaf
+    [PyPI] #aaf
+    [JetBrains] #aaf
 }
 
 frame "Logging stack" {
@@ -48,6 +56,8 @@ telegraf .. telegraf_2
 intnet --> portainer
 portainer -l- docker
 telegraf -u-- docker
+
+release_watcher --> 3rd_party
 
 stack -u-> [Fluentd]
 stack -u-> [Fluentd]
