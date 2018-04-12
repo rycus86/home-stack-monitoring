@@ -123,6 +123,27 @@ services:
         <<: *log-options
         tag: app.telegraf
 
+  container-metrics:
+    image: rycus86/container-metrics
+    command: >
+      -interval 15s
+      -port 8080
+    deploy:
+      mode: global
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        prometheus-job: container-metrics
+        prometheus-port: 8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.container.metrics
+
   # Visualization
 
   grafana:
