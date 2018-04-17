@@ -105,6 +105,7 @@ services:
   container-metrics:
     image: rycus86/container-metrics
     command: >
+      -labels com.docker.swarm.service.name
       -interval 15s
       -port 8080
     deploy:
