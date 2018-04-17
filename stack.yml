@@ -102,27 +102,6 @@ services:
         max-size: 25m
         max-file: 4
 
-  telegraf:
-    image: telegraf:1.5.2
-    deploy:
-      mode: global
-      update_config:
-        parallelism: 1
-        order: start-first
-      labels:
-        prometheus-job: telegraf
-        prometheus-port: 9273
-    configs:
-      - source: telegraf-config
-        target: /etc/telegraf/telegraf.conf
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    logging:
-      driver: fluentd
-      options:
-        <<: *log-options
-        tag: app.telegraf
-
   container-metrics:
     image: rycus86/container-metrics
     command: >
