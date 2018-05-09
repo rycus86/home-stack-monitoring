@@ -127,7 +127,7 @@ services:
   # Visualization
 
   grafana:
-    image: rycus86/grafana:5.1.0
+    image: rycus86/grafana:5.1.2
     deploy:
       replicas: 1
       update_config:
