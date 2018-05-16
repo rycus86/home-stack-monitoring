@@ -155,7 +155,8 @@ services:
         tag: app.grafana
 
   portainer:
-    image: portainer/portainer:1.16.4
+    image: portainer/portainer:1.17.0
+    command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
     deploy:
       replicas: 1
       placement:
@@ -165,12 +166,25 @@ services:
       - 9000:9000
     volumes:
       - portainer-data:/data:nocopy
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     logging:
       driver: fluentd
       options:
         <<: *log-options
         tag: app.portainer
+
+  portainer-agent:
+    image: portainer/agent:1.0.0
+    deploy:
+      mode: global
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.portainer-agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.portainer.agent
 
   release-watcher:
     image: rycus86/release-watcher
