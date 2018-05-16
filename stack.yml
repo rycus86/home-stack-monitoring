@@ -86,7 +86,7 @@ services:
         tag: app.pygen.worker.prometheus
 
   prometheus-node-exporter:
-    image: rycus86/prometheus-node-exporter:0.15.2
+    image: rycus86/prometheus-node-exporter:0.16.0
     deploy:
       mode: global
       update_config:
