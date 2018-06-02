@@ -27,16 +27,20 @@ releases:
       repo:   node_exporter
       filter: '^v?[0-9]+\.[0-9]+\.[0-9]+($| .*)'
 
-    - owner: grafana
-      repo:  grafana
+    - owner:  grafana
+      repo:   grafana
+      filter: '^v[0-9]+\.[0-9]+\.[0-9]+$'
+
+    - owner:  containous
+      repo:   traefik
       filter: '^v[0-9]+\.[0-9]+\.[0-9]+$'
 
   jetbrains:
-    - name: go
+    - name:  go
       alias: GoLand
 
-    - name: iiu
+    - name:  iiu
       alias: IntelliJ IDEA
 
-    - name: pcp
+    - name:  pcp
       alias: PyCharm
