@@ -14,7 +14,7 @@ x-nfs-volume-opts:
 services:
 
   prometheus:
-    image: rycus86/prometheus:2.2.1
+    image: rycus86/prometheus:2.3.0
     deploy:
       replicas: 1
       placement:
