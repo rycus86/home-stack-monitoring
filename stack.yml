@@ -8,7 +8,7 @@ x-log-options:
 
 x-nfs-volume-opts:
   &volume-options
-  type: nfs
+  type: nfs4
   o: addr=192.168.0.52,rsize=8192,wsize=8192,timeo=15,hard,intr
 
 services:
