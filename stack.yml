@@ -161,7 +161,7 @@ services:
         tag: app.grafana
 
   portainer:
-    image: portainer/portainer:1.17.1
+    image: portainer/portainer:1.18.0
     command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
     deploy:
       replicas: 1
@@ -217,6 +217,30 @@ services:
         <<: *log-options
         tag: app.release.watcher
 
+  github-exporter:
+    image: rycus86/github-exporter
+    command: >
+      -user rycus86
+      -credentials /secret/github.creds
+      -skip-forks
+      -port 8080
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        prometheus-job: github-exporter
+        prometheus-port: 8080
+    secrets:
+      - source: github-exporter-creds
+        target: /secret/github.creds
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.github.exporter
+
 configs:
   prometheus-template:
     file: ./config/prometheus.pygen.template.yml
@@ -241,6 +265,9 @@ secrets:
   release-watcher-slack:
     file: ./config/rw_slack.conf
     name: release-watcher-slack-config-${RW_SLACK_CONF}
+  github-exporter-creds:
+    file: ./config/github-exporter.conf
+    name: github-exporter-creds-${GITHUB_EXPORTER_CONF}
 
 volumes:
   prometheus-config:
