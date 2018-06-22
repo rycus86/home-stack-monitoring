@@ -222,6 +222,7 @@ services:
     command: >
       -user rycus86
       -credentials /secret/github.creds
+      -interval 15m
       -skip-forks
       -port 8080
     deploy:
