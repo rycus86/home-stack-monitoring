@@ -133,7 +133,7 @@ services:
   # Visualization
 
   grafana:
-    image: rycus86/grafana:5.1.4
+    image: rycus86/grafana:5.2.0
     deploy:
       replicas: 1
       update_config:
@@ -161,7 +161,7 @@ services:
         tag: app.grafana
 
   portainer:
-    image: portainer/portainer:1.18.0
+    image: portainer/portainer:1.18.1
     command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
     deploy:
       replicas: 1
