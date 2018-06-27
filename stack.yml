@@ -242,6 +242,26 @@ services:
         <<: *log-options
         tag: app.github.exporter
 
+  dockerhub-exporter:
+    image: rycus86/dockerhub-exporter
+    command: >
+      -owner rycus86
+      -interval 1h
+      -port 8080
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+      labels:
+        prometheus-job: dockerhub-exporter
+        prometheus-port: 8080
+    logging:
+      driver: fluentd
+      options:
+        <<: *log-options
+        tag: app.dockerhub.exporter
+
 configs:
   prometheus-template:
     file: ./config/prometheus.pygen.template.yml
