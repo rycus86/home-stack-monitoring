@@ -69,7 +69,6 @@ services:
         target: /etc/docker-pygen/templates/prometheus.tmpl
     volumes:
       - prometheus-config:/etc/prometheus:nocopy
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     logging:
       driver: fluentd
       options:
