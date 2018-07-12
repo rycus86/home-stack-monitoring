@@ -14,7 +14,7 @@ x-nfs-volume-opts:
 services:
 
   prometheus:
-    image: rycus86/prometheus:2.3.1
+    image: rycus86/prometheus:2.3.2
     command: >
       --config.file=/etc/prometheus/prometheus.yml
       --storage.tsdb.path=/prometheus
