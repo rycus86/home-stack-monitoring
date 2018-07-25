@@ -149,7 +149,7 @@ services:
   # Visualization
 
   grafana:
-    image: rycus86/grafana:5.2.1
+    image: rycus86/grafana:5.2.2
     deploy:
       replicas: 1
       resources:
