@@ -180,7 +180,7 @@ services:
         tag: app.grafana
 
   portainer:
-    image: portainer/portainer:1.18.1
+    image: portainer/portainer:1.19.0
     command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
     deploy:
       replicas: 1
@@ -201,7 +201,7 @@ services:
         tag: app.portainer
 
   portainer-agent:
-    image: portainer/agent:1.0.0
+    image: portainer/agent:1.1.0
     deploy:
       mode: global
       resources:
