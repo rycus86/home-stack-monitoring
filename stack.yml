@@ -201,7 +201,7 @@ services:
         tag: app.portainer
 
   portainer-agent:
-    image: portainer/agent:1.1.0
+    image: portainer/agent:1.1.1
     deploy:
       mode: global
       resources:
